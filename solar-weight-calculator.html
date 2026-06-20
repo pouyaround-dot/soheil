@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>محاسبه‌گر وزن سوله تیرورق</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --steel:#1a2332;--steel-lt:#2e4160;
+  --gold:#e8a020;
+  --bg:#eef0f4;--card:#fff;
+  --t1:#1a2332;--t2:#4a5568;--t3:#9ba3b0;
+  --bdr:#dde2ea;--shd:0 2px 10px rgba(26,35,50,.07);
+}
+body{font-family:'Vazirmatn',sans-serif;background:var(--bg);color:var(--t1);min-height:100vh}
+
+.hdr{background:var(--steel);position:relative;overflow:hidden}
+.hdr::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 39px,rgba(255,255,255,.018) 39px 40px)}
+.hdr-in{max-width:1100px;margin:0 auto;padding:22px 20px;display:flex;align-items:center;gap:13px;position:relative}
+.hdr-ico{width:42px;height:42px;background:var(--gold);display:flex;align-items:center;justify-content:center;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);flex-shrink:0}
+.hdr-ico svg{width:22px;height:22px;fill:var(--steel)}
+.hdr h1{color:#fff;font-size:1.2rem;font-weight:700}
+.hdr p{color:rgba(255,255,255,.38);font-size:.72rem;margin-top:2px}
+.hdr-tag{margin-right:auto;background:rgba(232,160,32,.15);border:1px solid rgba(232,160,32,.3);color:var(--gold);font-size:.66rem;padding:3px 9px;font-weight:700;letter-spacing:1px}
+
+.wrap{max-width:1100px;margin:0 auto;padding:24px 18px 50px;display:grid;grid-template-columns:360px 1fr;gap:16px;align-items:start}
+@media(max-width:780px){.wrap{grid-template-columns:1fr}}
+
+.card{background:var(--card);border:1px solid var(--bdr);box-shadow:var(--shd)}
+.ch{padding:13px 17px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;gap:8px}
+.ch-dot{width:6px;height:6px;background:var(--gold);transform:rotate(45deg);flex-shrink:0}
+.ch-t{font-size:.82rem;font-weight:700}
+.cb{padding:16px}
+
+.f{margin-bottom:12px}.f:last-child{margin-bottom:0}
+.f>label{display:block;font-size:.72rem;font-weight:600;color:var(--t2);margin-bottom:4px}
+.iw{position:relative}
+input[type=number],select{
+  width:100%;padding:8px 11px 8px 42px;border:1.5px solid var(--bdr);background:#f9fafb;
+  font-family:'Vazirmatn',sans-serif;font-size:.88rem;color:var(--t1);outline:none;
+  transition:border-color .15s,background .15s;-moz-appearance:textfield;appearance:textfield}
+input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appearance:none}
+input:focus,select:focus{border-color:var(--gold);background:#fff}
+select{padding-left:11px;cursor:pointer}
+.ub{position:absolute;left:0;top:0;bottom:0;width:34px;background:var(--steel);display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:700;color:rgba(255,255,255,.6);letter-spacing:.3px}
+
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.sdiv{font-size:.68rem;font-weight:700;color:var(--t3);letter-spacing:1px;padding:8px 0 5px;border-bottom:1px solid var(--bdr);margin:12px 0 10px}
+
+.ck-row{display:flex;flex-direction:column;gap:6px}
+.ck{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1.5px solid var(--bdr);cursor:pointer;background:#f9fafb;transition:all .15s;user-select:none}
+.ck:hover{background:#eef2ff;border-color:#aab8d0}
+.ck input{display:none}
+.ck-box{width:16px;height:16px;border:2px solid var(--bdr);background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s}
+.ck input:checked~.ck-box{background:var(--steel);border-color:var(--steel)}
+.ck-tick{display:none;width:8px;height:8px}
+.ck input:checked~.ck-box .ck-tick{display:block}
+.ck-lbl{font-size:.78rem;color:var(--t2)}
+.ck input:checked~.ck-box~.ck-lbl{color:var(--t1);font-weight:600}
+
+.btn{width:100%;padding:12px;background:var(--steel);color:#fff;border:none;font-family:'Vazirmatn',sans-serif;font-size:.88rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;margin-top:12px;position:relative;transition:background .15s}
+.btn:hover{background:var(--steel-lt)}
+.btn::after{content:'';position:absolute;bottom:0;right:0;left:0;height:3px;background:var(--gold)}
+
+/* hint box */
+.hint{background:#fffbf0;border:1px solid #f0d080;padding:10px 13px;font-size:.72rem;color:#7a5a10;line-height:1.7;margin-bottom:12px}
+.hint strong{color:#5a3e08}
+
+/* RESULTS */
+.res-col{display:flex;flex-direction:column;gap:14px}
+.empty{text-align:center;padding:48px 20px;color:var(--t3);font-size:.82rem}
+.empty svg{width:40px;height:40px;opacity:.2;display:block;margin:0 auto 12px}
+
+.banner{background:var(--steel);padding:18px 20px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.banner-lbl{color:rgba(255,255,255,.5);font-size:.7rem;font-weight:600;letter-spacing:.5px}
+.banner-sub{color:rgba(255,255,255,.3);font-size:.68rem;margin-top:3px}
+.banner-big{color:#fff;font-size:1.9rem;font-weight:700;letter-spacing:-1px}
+.banner-unit{color:var(--gold);font-size:.82rem;font-weight:600;margin-right:3px}
+.banner-sqm{color:rgba(255,255,255,.35);font-size:.68rem;margin-top:2px;text-align:left}
+
+.sum-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;padding:14px 16px}
+.si{border:1px solid var(--bdr);padding:11px 13px;position:relative;overflow:hidden}
+.si::before{content:'';position:absolute;right:0;top:0;bottom:0;width:3px;background:var(--gold);opacity:.45}
+.si-lbl{font-size:.69rem;color:var(--t2);font-weight:600;margin-bottom:2px}
+.si-val{font-size:1rem;font-weight:700;color:var(--t1)}
+.si-u{font-size:.65rem;color:var(--t3);margin-right:2px}
+.si-pct{font-size:.65rem;color:var(--t3);margin-top:2px}
+.si-bar{position:absolute;bottom:0;right:0;left:0;height:2px;background:var(--bdr)}
+.si-bf{height:100%;background:var(--gold);transition:width .5s}
+
+/* table */
+.dtbl{width:100%;border-collapse:collapse;font-size:.76rem}
+.dtbl thead tr{background:var(--steel)}
+.dtbl thead th{color:rgba(255,255,255,.65);font-weight:600;padding:9px 11px;text-align:right;font-size:.7rem;letter-spacing:.3px;white-space:nowrap}
+.dtbl tbody tr{border-bottom:1px solid var(--bdr)}
+.dtbl tbody tr:last-child{border-bottom:none}
+.dtbl tbody tr:hover{background:#f7f9fc}
+.dtbl td{padding:8px 11px;color:var(--t1);vertical-align:middle}
+.dtbl td.num{font-weight:700;color:var(--steel);white-space:nowrap}
+.dtbl td.sub{font-size:.67rem;color:var(--t3);padding-top:1px}
+.cat-row td{background:#f4f6fa;font-weight:700;font-size:.71rem;color:var(--t2);letter-spacing:.3px}
+.cat-row td:first-child{border-right:3px solid var(--gold)}
+.tot-row td{background:var(--steel);color:#fff;font-weight:700;font-size:.8rem}
+.tot-row td.num{color:var(--gold)}
+
+/* warn box */
+.warn{background:#fff8f0;border:1px solid #f0c080;padding:10px 14px;font-size:.7rem;color:#7a4a00;line-height:1.8}
+.warn strong{color:#5a3200}
+
+.note{font-size:.68rem;color:var(--t3);padding:8px 0;line-height:1.8;grid-column:1/-1}
+.note strong{color:var(--t2)}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-in">
+    <div class="hdr-ico"><svg viewBox="0 0 24 24"><path d="M2 20h20v-2H2v2zm1-5h18l-9-9-9 9z"/></svg></div>
+    <div><h1>محاسبه‌گر وزن سوله تیرورق</h1><p>اسکلت جوشی با مقطع متغیر — فولاد St37/St52</p></div>
+    <div class="hdr-tag">v2.0</div>
+  </div>
+</div>
+
+<div class="wrap">
+
+<!-- LEFT -->
+<div style="display:flex;flex-direction:column;gap:14px">
+
+  <div class="card">
+    <div class="ch"><div class="ch-dot"></div><div class="ch-t">ابعاد کلی سوله</div></div>
+    <div class="cb">
+      <div class="f"><label>طول سوله</label><div class="iw"><input type="number" id="L" min="5" max="500" placeholder="مثال: ۶۰"><div class="ub">m</div></div></div>
+      <div class="f"><label>عرض (دهانه)</label><div class="iw"><input type="number" id="W" min="5" max="100" placeholder="مثال: ۱۵"><div class="ub">m</div></div></div>
+      <div class="f"><label>ارتفاع ستون در گوشه (پای ستون تا knee)</label><div class="iw"><input type="number" id="Hmin" min="2" max="30" placeholder="مثال: ۵"><div class="ub">m</div></div></div>
+      <div class="f"><label>شیب سقف</label><div class="iw"><input type="number" id="slope" value="10" min="3" max="30"><div class="ub">°</div></div></div>
+      <div class="f"><label>فاصله قاب‌ها (گام)</label><div class="iw"><input type="number" id="span" value="5" min="3" max="15"><div class="ub">m</div></div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="ch"><div class="ch-dot"></div><div class="ch-t">مقطع تیرورق — ستون</div></div>
+    <div class="cb">
+      <div class="hint">
+        <strong>ستون متغیر:</strong> جان ستون از پایین (H_min) تا محل اتصال به تیر (H_max) تغییر می‌کند.
+        معمولاً H_max ≈ ۱.۵ تا ۲ برابر H_min
+      </div>
+      <div class="g2">
+        <div class="f"><label>ارتفاع جان — پایین (mm)</label><div class="iw"><input type="number" id="cw_bot" placeholder="مثال: ۳۰۰"><div class="ub">mm</div></div></div>
+        <div class="f"><label>ارتفاع جان — بالا/knee (mm)</label><div class="iw"><input type="number" id="cw_top" placeholder="مثال: ۶۰۰"><div class="ub">mm</div></div></div>
+        <div class="f"><label>ضخامت جان (mm)</label><div class="iw"><input type="number" id="cw_t" placeholder="مثال: ۸"><div class="ub">mm</div></div></div>
+        <div class="f"><label>عرض بال (mm)</label><div class="iw"><input type="number" id="cf_w" placeholder="مثال: ۲۰۰"><div class="ub">mm</div></div></div>
+        <div class="f"><label>ضخامت بال پایین (mm)</label><div class="iw"><input type="number" id="cf_bt" placeholder="مثال: ۱۲"><div class="ub">mm</div></div></div>
+        <div class="f"><label>ضخامت بال بالا (mm)</label><div class="iw"><input type="number" id="cf_tt" placeholder="مثال: ۱۰"><div class="ub">mm</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="ch"><div class="ch-dot"></div><div class="ch-t">مقطع تیرورق — رافتر (تیر شیب‌دار)</div></div>
+    <div class="cb">
+      <div class="hint">
+        <strong>رافتر متغیر:</strong> جان از محل knee (H_max) تا ridge (H_ridge) کاهش می‌یابد.
+        H_ridge معمولاً ≈ ۲۰۰–۳۵۰ mm
+      </div>
+      <div class="g2">
+        <div class="f"><label>ارتفاع جان — knee (mm)</label><div class="iw"><input type="number" id="rw_knee" placeholder="مثال: ۶۰۰"><div class="ub">mm</div></div></div>
+        <div class="f"><label>ارتفاع جان — ridge (mm)</label><div class="iw"><input type="number" id="rw_ridge" placeholder="مثال: ۲۵۰"><div class="ub">mm</div></div></div>
+        <div class="f"><label>ضخامت جان (mm)</label><div class="iw"><input type="number" id="rw_t" placeholder="مثال: ۶"><div class="ub">mm</div></div></div>
+        <div class="f"><label>عرض بال (mm)</label><div class="iw"><input type="number" id="rf_w" placeholder="مثال: ۱۸۰"><div class="ub">mm</div></div></div>
+        <div class="f"><label>ضخامت بال پایین (mm)</label><div class="iw"><input type="number" id="rf_bt" placeholder="مثال: ۱۰"><div class="ub">mm</div></div></div>
+        <div class="f"><label>ضخامت بال بالا (mm)</label><div class="iw"><input type="number" id="rf_tt" placeholder="مثال: ۸"><div class="ub">mm</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="ch"><div class="ch-dot"></div><div class="ch-t">اجزاء و پوشش</div></div>
+    <div class="cb">
+      <div class="f">
+        <label>نوع پوشش (سقف + دیوار)</label>
+        <select id="clad">
+          <option value="12">ساندویچ پانل ۵۰ میل — ۱۲ kg/m²</option>
+          <option value="4.5">ورق گالوانیزه ساده — ۴.۵ kg/m²</option>
+          <option value="8">ورق رنگی با عایق — ۸ kg/m²</option>
+          <option value="0">بدون پوشش</option>
+        </select>
+      </div>
+      <div class="sdiv">اجزاء موجود در محاسبه</div>
+      <div class="ck-row">
+        <label class="ck"><input type="checkbox" id="chkStiff" checked>
+          <div class="ck-box"><svg class="ck-tick" viewBox="0 0 10 10" fill="none"><path d="M1.5 5l2.5 2.5 4.5-5" stroke="#e8a020" stroke-width="1.8"/></svg></div>
+          <span class="ck-lbl">سخت‌کننده جان (stiffener)</span>
+        </label>
+        <label class="ck"><input type="checkbox" id="chkPurlin" checked>
+          <div class="ck-box"><svg class="ck-tick" viewBox="0 0 10 10" fill="none"><path d="M1.5 5l2.5 2.5 4.5-5" stroke="#e8a020" stroke-width="1.8"/></svg></div>
+          <span class="ck-lbl">پرلین سقف (Z200 — هر ۱.۳ متر)</span>
+        </label>
+        <label class="ck"><input type="checkbox" id="chkGirt" checked>
+          <div class="ck-box"><svg class="ck-tick" viewBox="0 0 10 10" fill="none"><path d="M1.5 5l2.5 2.5 4.5-5" stroke="#e8a020" stroke-width="1.8"/></svg></div>
+          <span class="ck-lbl">لاپه دیوار — Girt (C200)</span>
+        </label>
+        <label class="ck"><input type="checkbox" id="chkBrace" checked>
+          <div class="ck-box"><svg class="ck-tick" viewBox="0 0 10 10" fill="none"><path d="M1.5 5l2.5 2.5 4.5-5" stroke="#e8a020" stroke-width="1.8"/></svg></div>
+          <span class="ck-lbl">مهاربند X — ۲ دهانه هر انتها</span>
+        </label>
+        <label class="ck"><input type="checkbox" id="chkGutter">
+          <div class="ck-box"><svg class="ck-tick" viewBox="0 0 10 10" fill="none"><path d="M1.5 5l2.5 2.5 4.5-5" stroke="#e8a020" stroke-width="1.8"/></svg></div>
+          <span class="ck-lbl">ناودان و فلاشینگ</span>
+        </label>
+        <label class="ck"><input type="checkbox" id="chkBase" checked>
+          <div class="ck-box"><svg class="ck-tick" viewBox="0 0 10 10" fill="none"><path d="M1.5 5l2.5 2.5 4.5-5" stroke="#e8a020" stroke-width="1.8"/></svg></div>
+          <span class="ck-lbl">بیس‌پلیت و ورق اتصال</span>
+        </label>
+      </div>
+
+      <div class="sdiv">ضریب اضافه (waste + اتصالات + جوش)</div>
+      <div class="f">
+        <label>ضریب اضافه — معمولاً ۸ تا ۱۵٪</label>
+        <div class="iw"><input type="number" id="waste" value="10" min="0" max="30"><div class="ub">%</div></div>
+      </div>
+
+      <button class="btn" onclick="calculate()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+        محاسبه وزن سوله
+      </button>
+    </div>
+  </div>
+
+</div><!-- end left -->
+
+<!-- RIGHT -->
+<div class="res-col" id="resArea">
+  <div class="card">
+    <div class="cb">
+      <div class="empty">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 3h18v18H3V3zm2 2v14h14V5H5zm2 2h10v2H7V7zm0 4h10v2H7v-2zm0 4h6v2H7v-2z"/></svg>
+        ابعاد، مشخصات مقطع و اجزاء را وارد کنید
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="note">
+  <strong>⚠ تذکر:</strong>
+  محاسبات بر اساس چگالی فولاد ۷۸۵۰ kg/m³ و فرمول دقیق مقطع متغیر (انتگرال خطی) انجام می‌شود.
+  ضریب اضافه شامل waste برش، ورق‌های اتصال، جوش و پیچ‌ومهره است.
+  برای طراحی نهایی مراجعه به مهندس سازه الزامی است.
+</div>
+</div>
+
+<script>
+const RHO = 7850; // kg/m³
+
+// Weight per meter of a tapered plate girder (linear interpolation)
+// h1,h2: web height at two ends (m), tw: web thickness (m)
+// fw: flange width (m), ft1,ft2: flange thickness at two ends (m)
+// returns average kg/m
+function taperedPGweightPerM(h1, h2, tw, fw, ft1, ft2) {
+  const avgWebArea  = ((h1 + h2) / 2) * tw;          // m² per m
+  const avgFlgArea  = fw * ((ft1 + ft2) / 2) * 2;    // top+bottom flanges
+  return (avgWebArea + avgFlgArea) * RHO;
+}
+
+function v(id){ return parseFloat(document.getElementById(id).value)||0; }
+function mm(x){ return x/1000; }
+function fmt(kg){ return (kg/1000).toFixed(3); }
+function pct(a,b){ return b>0?((a/b)*100).toFixed(1):'0'; }
+
+function calculate(){
+  // --- Geometry ---
+  const L    = v('L');
+  const W    = v('W');
+  const Hmin = v('Hmin');
+  const slp  = v('slope')||10;
+  const sp   = v('span')||5;
+
+  if(!L||!W||!Hmin){alert('لطفاً طول، عرض و ارتفاع ستون را وارد کنید.');return;}
+
+  const slopeRad = slp * Math.PI / 180;
+  const ridgeH   = (W/2) * Math.tan(slopeRad);   // height of ridge above column top (knee level)
+  const rafterL  = (W/2) / Math.cos(slopeRad);   // one rafter arm length on slope
+  const Hknee    = Hmin;                           // column height = eave height
+  const Hridge   = Hmin + ridgeH;                 // total height at ridge
+  const numFrames = Math.round(L / sp) + 1;
+  const numBays   = numFrames - 1;
+  const area      = L * W;
+  const roofArea  = 2 * rafterL * L;              // sloped roof area both sides
+
+  // wall area: two long walls (rectangle) + two gable ends (rectangle + triangle)
+  const longWallArea = 2 * L * Hmin;
+  const gableRect    = 2 * W * Hmin;
+  const gableTri     = 2 * 0.5 * W * ridgeH;
+  const wallArea     = longWallArea + gableRect + gableTri;
+
+  // --- Column section ---
+  const cw_bot = mm(v('cw_bot')||350);
+  const cw_top = mm(v('cw_top')||600);
+  const cw_t   = mm(v('cw_t')||8);
+  const cf_w   = mm(v('cf_w')||200);
+  const cf_bt  = mm(v('cf_bt')||12);
+  const cf_tt  = mm(v('cf_tt')||10);
+
+  const colKgPerM  = taperedPGweightPerM(cw_bot, cw_top, cw_t, cf_w, cf_bt, cf_tt);
+  const colCount   = numFrames * 2;
+  const colTotalL  = colCount * Hknee;
+  const colKg      = colKgPerM * colTotalL;
+
+  // --- Rafter section ---
+  const rw_knee  = mm(v('rw_knee')||600);
+  const rw_ridge = mm(v('rw_ridge')||250);
+  const rw_t     = mm(v('rw_t')||6);
+  const rf_w     = mm(v('rf_w')||180);
+  const rf_bt    = mm(v('rf_bt')||10);
+  const rf_tt    = mm(v('rf_tt')||8);
+
+  const rafterKgPerM   = taperedPGweightPerM(rw_knee, rw_ridge, rw_t, rf_w, rf_bt, rf_tt);
+  const rafterCount    = numFrames * 2; // 2 arms per frame
+  const rafterTotalL   = rafterCount * rafterL;
+  const rafterKg       = rafterKgPerM * rafterTotalL;
+
+  // --- Stiffeners ---
+  let stiffKg = 0;
+  if(document.getElementById('chkStiff').checked){
+    // Stiffener plate: height = web height, width ≈ flange width/2, thickness = web thickness
+    // Placed at: supports (2 per column end) + every 1.5m along rafter
+    // Column stiffeners: 3 per column (top, bottom, mid)
+    const colStiffH    = (cw_bot + cw_top) / 2; // avg web height
+    const colStiffW    = cf_w / 2;
+    const colStiffT    = cw_t;
+    const oneColStiff  = colStiffH * colStiffW * colStiffT * RHO; // kg each
+    const colStiffKg   = colCount * 4 * oneColStiff; // 4 stiffeners per column (pair at top, pair at base)
+
+    // Rafter stiffeners every 1.5m
+    const rafterStiffCount = numFrames * 2 * Math.ceil(rafterL / 1.5);
+    const avgRafterWebH    = (rw_knee + rw_ridge) / 2;
+    const oneRafterStiff   = avgRafterWebH * (rf_w / 2) * rw_t * RHO;
+    const rafterStiffKg    = rafterStiffCount * oneRafterStiff;
+
+    stiffKg = colStiffKg + rafterStiffKg;
+  }
+
+  // --- Purlins ---
+  let purlinKg = 0, purlinRows = 0, purlinTotalL = 0;
+  if(document.getElementById('chkPurlin').checked){
+    // Number of rows on each rafter arm
+    purlinRows = Math.ceil(rafterL / 1.3); // e.g. rafterL=7.6m → 6 rows per arm
+    const totalPurlinArms = numFrames * 2;  // no: purlins run along LENGTH between frames
+    // Correction: purlin runs along building length L, one row = L meters
+    // Total purlin length = purlinRows (per slope) × 2 slopes × L
+    purlinTotalL = purlinRows * 2 * L;
+    purlinKg = purlinTotalL * 4.5; // Z200: ~4.5 kg/m
+  }
+
+  // --- Girts ---
+  let girtKg = 0, girtTotalL = 0;
+  if(document.getElementById('chkGirt').checked){
+    const girtRowsLong = Math.ceil(Hmin / 1.4); // rows on each long wall
+    const girtRowsEnd  = Math.ceil(Hmin / 1.4); // rows on each gable wall
+    // Long walls: 2 walls × girtRowsLong rows × L each
+    // End walls: 2 walls × girtRowsEnd rows × W each
+    girtTotalL = 2 * girtRowsLong * L + 2 * girtRowsEnd * W;
+    girtKg = girtTotalL * 4.5;
+  }
+
+  // --- Bracing: X-brace in 2 bays at each end (roof + wall) ---
+  let braceKg = 0, braceTotalL = 0;
+  if(document.getElementById('chkBrace').checked){
+    // Wall X-brace: 2 bays × 2 walls (long) × 2 diagonals each
+    const wallDiag = Math.sqrt(sp*sp + Hmin*Hmin);
+    const wallBraceL = 4 * 2 * wallDiag; // 2 bays each end × 2 walls
+    // Roof X-brace: 2 bays × 2 slopes × 2 diagonals
+    const roofDiag = Math.sqrt(sp*sp + rafterL*rafterL);
+    const roofBraceL = 4 * 2 * roofDiag; // 2 bays each end × 2 sides
+    braceTotalL = wallBraceL + roofBraceL;
+    braceKg = braceTotalL * 3.8; // L50×5 nubshi: ~3.8 kg/m
+  }
+
+  // --- Gutters ---
+  let gutterKg = 0;
+  if(document.getElementById('chkGutter').checked){
+    // 2 eave gutters along length (both sides)
+    gutterKg = 2 * L * 5; // ~5 kg/m
+  }
+
+  // --- Base plates ---
+  let baseKg = 0;
+  if(document.getElementById('chkBase').checked){
+    // Base plate size roughly: (cf_w + 100mm) × (cw_bot + 100mm) × 20mm
+    const bpW = cf_w + 0.1;
+    const bpL = cw_bot + 0.1;
+    const bpT = 0.02; // 20mm
+    const oneBP = bpW * bpL * bpT * RHO;
+    // Connection plate at knee (column-rafter junction): 2 per column top
+    const kneeW = cf_w + 0.05;
+    const kneeL = 0.3;
+    const kneeT = 0.016;
+    const oneKnee = kneeW * kneeL * kneeT * RHO * 2;
+    baseKg = colCount * (oneBP + oneKnee);
+  }
+
+  // --- Cladding ---
+  const cladW  = v('clad');
+  const cladKg = cladW * (roofArea + wallArea);
+
+  // --- Waste factor ---
+  const wastePct = v('waste') / 100;
+
+  // Sub-totals (before waste)
+  const frameKg  = colKg + rafterKg + stiffKg;
+  const secondKg = purlinKg + girtKg + braceKg + gutterKg + baseKg;
+  const skelKg0  = frameKg + secondKg;
+  const wasteKg  = skelKg0 * wastePct;
+  const skelKg   = skelKg0 + wasteKg;
+  const totalKg  = skelKg + cladKg;
+
+  // ---- RENDER ----
+  const sections = [
+    {cat:'اسکلت اصلی — قاب‌های تیرورق متغیر', items:[
+      {name:'ستون تیرورق (متغیر)',
+       d1:`${colCount} ستون × ${Hknee.toFixed(1)} m = ${colTotalL.toFixed(1)} m کل`,
+       d2:`جان: ${v('cw_bot')}–${v('cw_top')} mm × ${v('cw_t')} mm | بال: ${v('cf_w')} × ${v('cf_bt')}/${v('cf_tt')} mm | ${colKgPerM.toFixed(1)} kg/m میانگین`,
+       kg:colKg},
+      {name:'رافتر تیرورق (متغیر)',
+       d1:`${rafterCount} تیر × ${rafterL.toFixed(2)} m = ${rafterTotalL.toFixed(1)} m کل`,
+       d2:`جان: ${v('rw_knee')}–${v('rw_ridge')} mm × ${v('rw_t')} mm | بال: ${v('rf_w')} × ${v('rf_bt')}/${v('rf_tt')} mm | ${rafterKgPerM.toFixed(1)} kg/m میانگین`,
+       kg:rafterKg},
+      ...(stiffKg>0?[{name:'سخت‌کننده جان (stiffener)',
+       d1:'پایه ستون + سر ستون (knee) + رافتر هر ۱.۵ m',
+       d2:'ورق جوشی دوطرفه',
+       kg:stiffKg}]:[]),
+    ]},
+    {cat:'اجزاء ثانویه', items:[
+      ...(purlinKg>0?[{name:'پرلین سقف — Z200',
+        d1:`${purlinRows} ردیف × ۲ شیب × ${L} m = ${purlinTotalL.toFixed(0)} m`,
+        d2:'فاصله ۱.۳ m — ۴.۵ kg/m',
+        kg:purlinKg}]:[]),
+      ...(girtKg>0?[{name:'لاپه دیوار — C200',
+        d1:`طول کل: ${girtTotalL.toFixed(0)} m (دیوارهای طولی + گابل)`,
+        d2:'فاصله ۱.۴ m — ۴.۵ kg/m',
+        kg:girtKg}]:[]),
+      ...(braceKg>0?[{name:'مهاربند X',
+        d1:`طول کل: ${braceTotalL.toFixed(1)} m (دیوار + سقف — ۲ دهانه هر انتها)`,
+        d2:'نبشی L50×5 — ۳.۸ kg/m',
+        kg:braceKg}]:[]),
+      ...(gutterKg>0?[{name:'ناودان و فلاشینگ',
+        d1:`۲ × ${L} m = ${(2*L).toFixed(0)} m`,
+        d2:'ورق گالوانیزه — ۵ kg/m',
+        kg:gutterKg}]:[]),
+      ...(baseKg>0?[{name:'بیس‌پلیت و ورق knee',
+        d1:`${colCount} ستون`,
+        d2:'ورق پای ستون + ورق اتصال knee',
+        kg:baseKg}]:[]),
+    ]},
+    {cat:'ضریب اضافه (waste + اتصالات)', items:[
+      {name:`ضریب ${v('waste')}٪ روی اسکلت`,
+       d1:'شامل: ورق‌های اتصال اضافه، waste برش، پیچ‌ومهره',
+       d2:'',kg:wasteKg}
+    ]},
+    ...(cladKg>0?[{cat:'پوشش', items:[
+      {name:'پوشش سقف و دیوار',
+       d1:`سقف: ${roofArea.toFixed(1)} m² + دیوار: ${wallArea.toFixed(1)} m² = ${(roofArea+wallArea).toFixed(1)} m²`,
+       d2:`${cladW} kg/m²`,
+       kg:cladKg}
+    ]}]:[])
+  ];
+
+  let html = `
+  <div class="card">
+    <div class="banner">
+      <div>
+        <div class="banner-lbl">وزن کل سوله</div>
+        <div class="banner-sub">${L}×${W} m | ${numFrames} قاب | گام ${sp} m | مساحت ${area.toFixed(0)} m²</div>
+        <div class="banner-sub" style="margin-top:3px">ارتفاع گوشه: ${Hmin} m | ارتفاع ridge: ${Hridge.toFixed(2)} m | رافتر: ${rafterL.toFixed(2)} m</div>
+      </div>
+      <div style="text-align:left">
+        <div><span class="banner-big">${fmt(totalKg)}</span><span class="banner-unit">تن</span></div>
+        <div class="banner-sqm">${(totalKg/area).toFixed(1)} kg/m² کل | اسکلت: ${(skelKg/area).toFixed(1)} kg/m²</div>
+      </div>
+    </div>
+    <div class="sum-grid">
+      <div class="si"><div class="si-lbl">اسکلت اصلی</div><div class="si-val">${fmt(frameKg)} <span class="si-u">تن</span></div><div class="si-pct">${pct(frameKg,totalKg)}٪</div><div class="si-bar"><div class="si-bf" style="width:${pct(frameKg,totalKg)}%"></div></div></div>
+      <div class="si"><div class="si-lbl">اجزاء ثانویه</div><div class="si-val">${fmt(secondKg)} <span class="si-u">تن</span></div><div class="si-pct">${pct(secondKg,totalKg)}٪</div><div class="si-bar"><div class="si-bf" style="width:${pct(secondKg,totalKg)}%"></div></div></div>
+      <div class="si"><div class="si-lbl">ضریب اضافه</div><div class="si-val">${fmt(wasteKg)} <span class="si-u">تن</span></div><div class="si-pct">${v('waste')}٪ از اسکلت</div><div class="si-bar"><div class="si-bf" style="width:${pct(wasteKg,totalKg)}%"></div></div></div>
+      ${cladKg>0?`<div class="si"><div class="si-lbl">پوشش</div><div class="si-val">${fmt(cladKg)} <span class="si-u">تن</span></div><div class="si-pct">${pct(cladKg,totalKg)}٪</div><div class="si-bar"><div class="si-bf" style="width:${pct(cladKg,totalKg)}%"></div></div></div>`:''}
+      <div class="si"><div class="si-lbl">تعداد قاب</div><div class="si-val">${numFrames}</div><div class="si-pct">گام ${sp} m</div></div>
+      <div class="si"><div class="si-lbl">kg/m² اسکلت</div><div class="si-val">${(skelKg/area).toFixed(1)}</div><div class="si-pct">بدون پوشش</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="ch"><div class="ch-dot"></div><div class="ch-t">جدول تفصیلی وزن</div></div>
+    <table class="dtbl">
+      <thead><tr><th>جزء</th><th>جزئیات</th><th>وزن (تن)</th><th>٪</th></tr></thead>
+      <tbody>`;
+
+  sections.forEach(sec => {
+    const st = sec.items.reduce((a,i)=>a+i.kg,0);
+    html += `<tr class="cat-row"><td>${sec.cat}</td><td></td><td class="num">${fmt(st)} تن</td><td>${pct(st,totalKg)}٪</td></tr>`;
+    sec.items.forEach(item => {
+      html += `<tr>
+        <td><div style="font-weight:600">${item.name}</div><div class="sub">${item.d2}</div></td>
+        <td style="font-size:.7rem;color:var(--t2)">${item.d1}</td>
+        <td class="num">${fmt(item.kg)}</td>
+        <td style="font-size:.7rem;color:var(--t3)">${pct(item.kg,totalKg)}٪</td>
+      </tr>`;
+    });
+  });
+
+  html += `<tr class="tot-row">
+    <td colspan="2">مجموع کل</td>
+    <td class="num">${fmt(totalKg)} تن</td>
+    <td>${(totalKg/area).toFixed(1)} kg/m²</td>
+  </tr></tbody></table></div>
+
+  <div class="warn">
+    <strong>مقایسه با مرجع:</strong>
+    سوله‌های تیرورق با دهانه ۱۵ m و طول ۶۰ m معمولاً اسکلت خالص ۳۰–۴۵ تن (۳۳–۵۰ kg/m²) دارند.
+    عدد نرم‌افزار (۹۰ تن) احتمالاً شامل پوشش + بار برف/باد طراحی + ضرایب اطمینان یا زیرسازی هم هست.
+  </div>`;
+
+  document.getElementById('resArea').innerHTML = html;
+}
+
+document.addEventListener('keydown', e => { if(e.key==='Enter') calculate(); });
+</script>
+</body>
+</html>
